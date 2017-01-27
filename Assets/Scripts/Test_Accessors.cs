@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using LongswordStudios;
 
+/// <summary>
+/// Harness for accessor (get/set) tests.
+/// </summary>
 public class Test_Accessors : MonoBehaviour
 {
     void Update()

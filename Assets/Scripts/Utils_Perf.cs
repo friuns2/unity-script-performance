@@ -4,24 +4,29 @@ using UnityEngine;
 
 namespace LongswordStudios
 {
+    // Texture notes:
+    // Make sure Read/Write is disabled
+    // Disable mipmaps if possible
+    // Make sure textures are Compressed
+    // Ensure sizes aren't too large
+    // - 2048x2048 or 1024x1024 for UI atlases
+    // - 512x512 for mobile model textures
+
+    // Unite Europe 2016 - Optimizing Mobile Applications
+    // https://www.youtube.com/watch?v=j4YAY36xjwE
+    //
+    // Unity US 2016 - Let's Talk (Content) Optimization
+    // https://www.youtube.com/watch?v=n-oZa4Fb12U
+
+    /// <summary>
+    /// Performance utility code
+    /// </summary>
     public class Utils_Perf
     {
-        // Texture notes:
-        // Make sure Read/Write is disabled
-        // Disable mipmaps if possible
-        // Make sure textures are Compressed
-        // Ensure sizes aren't too large
-        // - 2048x2048 or 1024x1024 for UI atlases
-        // - 512x512 for mobile model textures
-
-        // Unite Europe 2016 - Optimizing Mobile Applications
-        // https://www.youtube.com/watch?v=j4YAY36xjwE
-        //
-        // Unity US 2016 - Let's Talk (Content) Optimization
-        // https://www.youtube.com/watch?v=n-oZa4Fb12U
-
-        // Static values with no accessor functions to slow them down.
-        // About 4x faster than Vector3.zero
+        /// <summary>
+        /// Static values with no accessor functions to slow them down. 
+        /// About 4x faster than Vector3.zero
+        /// </summary>
         public static readonly Vector3 vec3_back = Vector3.back;
         public static readonly Vector3 vec3_down = Vector3.down;
         public static readonly Vector3 vec3_forward = Vector3.forward;
@@ -31,19 +36,34 @@ namespace LongswordStudios
         public static readonly Vector3 vec3_one = Vector3.one;
         public static readonly Vector3 vec3_zero = Vector3.zero;
 
-        // Static values with no accessor functions to slow them down.
-        // About 4x faster than Quaternion.identity
+        /// <summary>
+        /// Static values with no accessor functions to slow them down.
+        /// About 4x faster than Quaternion.identity
+        /// </summary>
         public static readonly Quaternion quat_identity = Quaternion.identity;
 
-        // Does s1 start with s2?
-        // 
-        // Strict byte for byte comparison, nothing fancy.
-        // About 100x as fast as String.EndsWith()
+        /// <summary>
+        /// Does s1 start with s2?
+        /// Strict byte for byte comparison, nothing fancy.
+        /// About 100x as fast as String.StartsWith()
+        /// </summary>
+        /// <param name="s1">Longer string</param>
+        /// <param name="s2">Shorter string</param>
+        /// <returns>true, if s1 starts with s2</returns>
         public static bool StartsWith(string s1, string s2)
         {
             return StartsWith(s1, s2, 0);
         }
 
+        /// <summary>
+        /// Does s1 start with s2?
+        /// Strict byte for byte comparison, nothing fancy.
+        /// About 100x as fast as String.StartsWith()
+        /// </summary>
+        /// <param name="s1">Longer string</param>
+        /// <param name="s2">Shorter string</param>
+        /// <param name="startIndex">Start checking at this index of s1</param>
+        /// <returns>true, if s1 starts with s2</returns>
         public static bool StartsWith(string s1, string s2, int startIndex)
         {
             if (string.IsNullOrEmpty(s1) || string.IsNullOrEmpty(s2))
@@ -66,9 +86,14 @@ namespace LongswordStudios
             return true;
         }
 
-        // Does s1 end with s2?
-        // Strict byte for byte comparison, nothing fancy.
-        // About 100x as fast as String.EndsWith()
+        /// <summary>
+        /// Does s1 end with s2?
+        /// Strict byte for byte comparison, nothing fancy.
+        /// About 100x as fast as String.EndsWith()
+        /// </summary>
+        /// <param name="s1">Longer string</param>
+        /// <param name="s2">Shorter string</param>
+        /// <returns>true, if s1 ends with s2</returns>        
         public static bool EndsWith(string s1, string s2)
         {
             if (string.IsNullOrEmpty(s1) || string.IsNullOrEmpty(s2))
@@ -90,14 +115,20 @@ namespace LongswordStudios
             return true;
         }
 
-        // Equals(s1) vs. Equals(s1, StringComparison.Ordinal)
-        // Regular String.Equals() is much faster. The Ordinal
-        // one calls into String.Compare() for some reason
-        // which is much slower. Bizarre.
-
-        // Byte by byte comparison
-        // Doesn't use language 
-        // About 3x faster than String.Contains()
+        /// <summary>
+        /// About 3x faster than String.Contains()
+        /// 
+        /// Byte by byte comparison
+        /// Doesn't use language features of C#
+        /// 
+        /// With Equals(s1) vs. Equals(s1, StringComparison.Ordinal)
+        /// regular String.Equals() is much faster. The Ordinal
+        /// one calls into String.Compare() for some reason
+        /// which is much slower. Bizarre.
+        /// </summary>
+        /// <param name="s1"></param>
+        /// <param name="s2"></param>
+        /// <returns>true, if s1 contains s2 in it anywhere.</returns>
         public static bool Contains(string s1, string s2)
         {
             if (string.IsNullOrEmpty(s1))
@@ -136,10 +167,7 @@ namespace LongswordStudios
             return false;
         }
 
-        // This code prevents the GC allocations when using Enum as
-        // a key in a Dictionary or other collection.
-        //
-        // Use :
+        // Usage :
         //
         // public enum TEST_KEY
         // {
@@ -153,6 +181,12 @@ namespace LongswordStudios
         //
         // https://stackoverflow.com/questions/26280788/dictionary-enum-key-performance
         // todo; check if your TEnum is enum && typeCode == TypeCode.Int
+
+        /// <summary>
+        /// This code prevents the GC allocations when using Enum as
+        /// a key in a Dictionary or other collection.
+        /// </summary>
+        /// <typeparam name="TEnum">Key type</typeparam>
         public struct EnumIntEqComp<TEnum> : IEqualityComparer<TEnum>
             where TEnum : struct
         {

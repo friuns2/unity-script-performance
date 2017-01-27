@@ -2,18 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// Project created by Garret Polk from Longsword Studios, Inc.
-// http://www.longswordstudios.com
-// Code comments are mine.
-// 
-// Code was taken from the slides of Søren Trautner Madsen
-// from the talk/video below. soren@playdead.com
-//
-// https://docs.google.com/presentation/d/1dew0TynVmtQf8OMLEz_YtRxK32a_0SAZU9-vgyMRPlA
-// https://www.youtube.com/watch?v=mQ2KTRn4BMI&t
-//
-// Performance improvements using a GameObject transform
-//
+/// <summary>
+/// Project created by Garret Polk from Longsword Studios, Inc.
+/// http://www.longswordstudios.com
+/// Code comments are mine.
+/// 
+/// Code was taken from the slides of Søren Trautner Madsen
+/// from the talk/video below. soren@playdead.com
+///
+/// https://docs.google.com/presentation/d/1dew0TynVmtQf8OMLEz_YtRxK32a_0SAZU9-vgyMRPlA
+/// https://www.youtube.com/watch?v=mQ2KTRn4BMI&t
+///
+/// Performance improvements using a GameObject transform
+/// </summary>
 public class Test_Transform : MonoBehaviour
 {
     // getter/setter versions
@@ -59,8 +60,10 @@ public class Test_Transform : MonoBehaviour
 
     }
 
-    // This is typical Update() code to move a GameObject.
-    // We can make it faster with some changes.
+    /// <summary>
+    /// This is typical Update() code to move a GameObject.
+    /// We can make it faster with some changes.
+    /// </summary>
     public void UpdateCharacter()
     {
         Vector3 lastPos = transform.position;
@@ -70,8 +73,10 @@ public class Test_Transform : MonoBehaviour
                            * drag * friction * Time.deltaTime;
     }
 
-    // Move all floating point operations together
-    // Then apply the result ONCE to the Vector of wantedVelocity
+    /// <summary>
+    /// Move all floating point operations together,
+    /// then apply the result ONCE to the Vector of wantedVelocity.
+    /// </summary>
     public void UpdateCharacter_ReduceVectorOps()
     {
         Vector3 lastPos = transform.position;
@@ -81,9 +86,11 @@ public class Test_Transform : MonoBehaviour
                            * drag * friction * Time.deltaTime);
     }
 
-    // Cache the GameObject.transform. Yeah, I thought
-    // Unity takes care of this too, but look at the performance
-    // difference!
+    /// <summary>
+    /// Cache the GameObject.transform. Yeah, I thought
+    /// Unity takes care of this too, but look at the performance
+    /// difference!
+    /// </summary>
     public void UpdateCharacter_CachedTransforms()
     {
         Vector3 lastPos = _transform.position; //cached in “void Start()”
@@ -93,8 +100,10 @@ public class Test_Transform : MonoBehaviour
                               * drag * friction * Time.deltaTime);
     }
 
-    // Use tranform.localPosition instead of the world position
-    // of transform.position.
+    /// <summary>
+    /// Use tranform.localPosition instead of the world position
+    /// of transform.position.
+    /// </summary>
     public void UpdateCharacter_LocalPosition()
     {
         Vector3 lastPos = _transform.localPosition;
@@ -104,9 +113,11 @@ public class Test_Transform : MonoBehaviour
                              * drag * friction * Time.deltaTime);
     }
 
-    // Cache the local position. Note : you will have
-    // to insure that other code doesn't directly modify
-    // the localPosition or it will get out of sync.
+    /// <summary>
+    /// Cache the local position. Note : you will have
+    /// to insure that other code doesn't directly modify
+    /// the localPosition or it will get out of sync.
+    /// </summary>
     public void UpdateCharacter_ReduceEngineCalls()
     {
         cachedLocalPosition += wantedVelocity * (speed * speedfactor
@@ -115,7 +126,9 @@ public class Test_Transform : MonoBehaviour
         _transform.localPosition = cachedLocalPosition;
     }
 
-    // Set the individual axis values ourselves.
+    /// <summary>
+    /// Set the individual axis values ourselves. 
+    /// </summary>
     public void UpdateCharacter_NoVectorMath()
     {
         float factor = speed * speedfactor
@@ -128,8 +141,10 @@ public class Test_Transform : MonoBehaviour
         _transform.localPosition = cachedLocalPosition;
     }
 
-    // This shows the impact of get/set instead of 
-    // raw public variables.
+    /// <summary>
+    /// This shows the impact of get/set instead of 
+    /// raw public variables.
+    /// </summary>
     public void UpdateCharacter_CacheDeltaTimeGetSet()
     {
         float factor = gsSpeed * gsSpeedfactor
@@ -142,10 +157,12 @@ public class Test_Transform : MonoBehaviour
         _transform.localPosition = cachedLocalPosition;
     }
 
-    // ** Fastest code, best example **
-    //
-    // Avoid calling Time.deltaTime more than once.
-    // We cache it and set it in the Controller code.
+    /// <summary>
+    /// ** Fastest code, best example **
+    ///
+    /// Avoid calling Time.deltaTime more than once.
+    /// We cache it and set it in the Controller code.
+    /// </summary>
     public void UpdateCharacter_CacheDeltaTime()
     {
         float factor = speed * speedfactor

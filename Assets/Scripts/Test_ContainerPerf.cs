@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using LongswordStudios;
 
-// Examples of performance improvements with containers.
-//
-// Using containers with keys of type Enum.
+/// <summary>
+/// Examples of performance improvements with containers.
+/// Using containers with keys of type Enum.
+/// </summary>
 public class Test_ContainerPerf : MonoBehaviour
 {
     public enum TEST_KEY

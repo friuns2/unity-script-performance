@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using LongswordStudios;
 
+/// <summary>
+/// Harness for string performance tests.
+/// </summary>
 public class Test_StringPerf : MonoBehaviour
 {
     string s1Test1 = "1Test1";
@@ -34,7 +37,7 @@ public class Test_StringPerf : MonoBehaviour
             // localized strings. C# can do the localized
             // sort for you! But...
             //
-            // CompareTo() is 70x slower than Equals()
+            // 0 == CompareTo() is 70x slower than Equals()
             if (0 == sTest.CompareTo(sTestTemp))
                 matches2++;
         }

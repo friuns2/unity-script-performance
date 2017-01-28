@@ -4,14 +4,6 @@ using UnityEngine;
 
 namespace LongswordStudios
 {
-    // Texture notes:
-    // Make sure Read/Write is disabled
-    // Disable mipmaps if possible
-    // Make sure textures are Compressed
-    // Ensure sizes aren't too large
-    // - 2048x2048 or 1024x1024 for UI atlases
-    // - 512x512 for mobile model textures
-
     // Unite Europe 2016 - Optimizing Mobile Applications
     // https://www.youtube.com/watch?v=j4YAY36xjwE
     //
@@ -151,6 +143,8 @@ namespace LongswordStudios
                 {
                     match = true;
 
+                    // Loop until we find a mismatch.
+                    // If we don't, then it matches.
                     for (iChar2 = 0; iChar2 < s2Len; iChar2++)
                     {
                         if (s1[iChar1 + iChar2] != s2[iChar2])

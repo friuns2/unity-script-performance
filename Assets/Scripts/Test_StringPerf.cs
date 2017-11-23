@@ -4,113 +4,135 @@ using UnityEngine;
 using LongswordStudios;
 
 /// <summary>
-/// Harness for string performance tests.
+///  Tests the speeds of various methods of String
 /// </summary>
-public class Test_StringPerf : MonoBehaviour
+public class Test_StringPerf : MonoBehaviour, ITestController
 {
     string s1Test1 = "1Test1";
     string sTest = "Test";
     string sTest2Test = "Test2Test";
+    int numIterations = 1000;
 
-    void Update()
+    public void Init()
     {
-        TestStartsWith();
-        TestEndsWith();
-        TestStringContains();
-        TestCompares();
     }
 
-    void TestCompares()
+    public void Test()
     {
-        int matches1 = 0;
-        int matches2 = 0;
+        int matches = 0;
         string sTestTemp = "Test";
 
-        for (int iTest = 0; iTest < 1000; iTest++)
+        UnityEngine.Profiling.Profiler.BeginSample("String (compare) : Equals");
+        for (int iTest = 0; iTest < numIterations; iTest++)
         {
             // Checks to see if the contents of a string
             // matches exactly.
             if (sTest.Equals(sTestTemp))
-                matches1++;
+                matches++;
+        }
+        UnityEngine.Profiling.Profiler.EndSample();
+        if (matches != numIterations)
+            Debug.LogError("Mismatch");
 
+        matches = 0;
+        UnityEngine.Profiling.Profiler.BeginSample("String (compare) : ==");
+
+        for (int iTest = 0; iTest < numIterations; iTest++)
+        {
+            // Checks to see if the contents of a string
+            // matches exactly.
+            if (sTest == sTestTemp)
+                matches++;
+        }
+        UnityEngine.Profiling.Profiler.EndSample();
+        if (matches != numIterations)
+            Debug.LogError("Mismatch");
+
+        matches = 0;
+        UnityEngine.Profiling.Profiler.BeginSample("String (compare) : CompareTo");
+        for (int iTest = 0; iTest < numIterations; iTest++)
+        { 
             // Used primarily for sorting, esp. on
             // localized strings. C# can do the localized
             // sort for you! But...
             //
             // 0 == CompareTo() is 70x slower than Equals()
             if (0 == sTest.CompareTo(sTestTemp))
-                matches2++;
+                matches++;
         }
-
-        if (matches1 != matches2)
+        UnityEngine.Profiling.Profiler.EndSample();
+        if (matches != numIterations)
             Debug.LogError("Mismatch");
-    }
 
-    void TestStringContains()
-    {
-        //string s1 = "1test1";
-        //string s2 = "test";
-        int matches1 = 0;
-        int matches2 = 0;
-
-        for (int iTest = 0; iTest < 1000; iTest++)
+        // CONTAINS
+        matches = 0;
+        UnityEngine.Profiling.Profiler.BeginSample("String (contains) : Contains");
+        for (int iTest = 0; iTest < numIterations; iTest++)
         {
             // String.Contains() calls String.IndexOf()
             // which calls CultureInfo stuff, which is slow.
             if (s1Test1.Contains(sTest))
-                matches1++;
-
-            if (Utils_Perf.Contains(s1Test1, sTest))
-                matches2++;
+                matches++;
         }
-
-        if (matches1 != matches2)
+        UnityEngine.Profiling.Profiler.EndSample();
+        if (matches != numIterations)
             Debug.LogError("Mismatch");
-    }
 
-    void TestEndsWith()
-    {
-        //string s1 = "test2test";
-        //string s2 = "test";
-        int matches1 = 0;
-        int matches2 = 0;
+        matches = 0;
+        UnityEngine.Profiling.Profiler.BeginSample("String (contains) : byte-wise contains");
+        for (int iTest = 0; iTest < numIterations; iTest++)
+        {
+            if (Utils_Perf.Contains(s1Test1, sTest))
+                matches++;
+        }
+        UnityEngine.Profiling.Profiler.EndSample();
+        if (matches != numIterations)
+            Debug.LogError("Mismatch");
 
-        for (int iLoop = 0; iLoop < 100; iLoop++)
+        // Ends With
+        matches = 0;
+        UnityEngine.Profiling.Profiler.BeginSample("String (EndsWith) : EndsWith");
+        for (int iLoop = 0; iLoop < numIterations; iLoop++)
         {
             if (sTest2Test.EndsWith(sTest))
-                matches1++;
+                matches++;
         }
+        UnityEngine.Profiling.Profiler.EndSample();
+        if (matches != numIterations)
+            Debug.LogError("Mismatch");
 
-        for (int iLoop = 0; iLoop < 100; iLoop++)
+        matches = 0;
+        UnityEngine.Profiling.Profiler.BeginSample("String (EndsWith) : byte-wise EndsWith");
+        for (int iLoop = 0; iLoop < numIterations; iLoop++)
         {
             if (Utils_Perf.EndsWith(sTest2Test, sTest))
-                matches2++;
+                matches++;
         }
-
-        if (matches1 != matches2)
+        UnityEngine.Profiling.Profiler.EndSample();
+        if (matches != numIterations)
             Debug.LogError("Mismatch");
-    }
 
-    void TestStartsWith()
-    {
-        //string s1 = "test2test";
-        //string s2 = "test";
-        int matches1 = 0;
-        int matches2 = 0;
-
-        for (int iLoop = 0; iLoop < 100; iLoop++)
+        // Starts with
+        matches = 0;
+        UnityEngine.Profiling.Profiler.BeginSample("String (StartsWith) : StartsWith");
+        for (int iLoop = 0; iLoop < numIterations; iLoop++)
         {
             if (sTest2Test.StartsWith(sTest))
-                matches1++;
+                matches++;
         }
+        UnityEngine.Profiling.Profiler.EndSample();
+        if (matches != numIterations)
+            Debug.LogError("Mismatch");
 
-        for (int iLoop = 0; iLoop < 100; iLoop++)
+        matches = 0;
+        UnityEngine.Profiling.Profiler.BeginSample("String (StartsWith) : byte-wise StartsWith");
+        for (int iLoop = 0; iLoop < numIterations; iLoop++)
         {
             if (Utils_Perf.StartsWith(sTest2Test, sTest))
-                matches2++;
+                matches++;
         }
-
-        if (matches1 != matches2)
+        UnityEngine.Profiling.Profiler.EndSample();
+        if (matches != numIterations)
             Debug.LogError("Mismatch");
     }
 }

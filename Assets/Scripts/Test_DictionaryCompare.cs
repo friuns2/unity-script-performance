@@ -7,7 +7,7 @@ using LongswordStudios;
 /// Examples of performance improvements with containers.
 /// Using containers with keys of type Enum.
 /// </summary>
-public class Test_ContainerPerf : MonoBehaviour
+public class Test_DictionaryCompare : MonoBehaviour, ITestController
 {
     public enum TEST_KEY
     {
@@ -43,7 +43,9 @@ public class Test_ContainerPerf : MonoBehaviour
     // Key : enum of integers
     Dictionary<TEST_KEY_INT, int> dictEnumInt2Int = new Dictionary<TEST_KEY_INT, int>();
 
-    void Start()
+    int numIterations = 1000;
+
+    public void Init()
     {
         // Dictionaries
         noboxCompare = new Utils_Perf.EnumIntEqComp<TEST_KEY>();
@@ -58,101 +60,70 @@ public class Test_ContainerPerf : MonoBehaviour
         dictStrInt.Add("12", 12);
     }
 
-    void Update()
+    public void Test()
     {
         // Collections
 
+        int number = 0;
         // Dictionary of ints
-        int iTestInt = TestDictionaryInt();
-
-        // Dictionary of strings
-        // No GC allocs! Wow! ~1.21ms
-        int iTestString = TestDictionaryString();
-
-        // Allocs 117.2KB in ~2.03ms  
-        int iTestEnum = TestDictionaryEnum();
-        if (iTestEnum != iTestString)
-            Debug.LogError("Mismatch in Enum");
-
-        // No GC allocs in ~1.73ms
-        int iTestEnumNoBox = TestDictionaryEnumNoBoxing();
-        if (iTestEnumNoBox != iTestString)
-            Debug.LogError("Mismatch in EnumNoBox");
-
-        // Identical performance as EnumNoBoxing
-        // No GC allocs in ~1.73ms
-        int iTestEnumInt = TestDictionaryEnumInt();
-        if (iTestEnumInt != iTestString)
-            Debug.LogError("Mismatch in EnumNoBox");
-    }
-
-    int TestDictionaryEnum()
-    {
-        int number = 0;
-
-        for (int iLoop = 0; iLoop < 1000; iLoop++)
-        {
-            if (dictEnumInt.ContainsKey(TEST_KEY.thing2))
-            {
-                number += dictEnumInt[TEST_KEY.thing2];
-            }
-        }
-        return number;
-    }
-
-    int TestDictionaryEnumNoBoxing()
-    {
-        int number = 0;
-
-        for (int iLoop = 0; iLoop < 1000; iLoop++)
-        {
-            if (dictEnumIntNoBox.ContainsKey(TEST_KEY.thing2))
-            {
-                number += dictEnumIntNoBox[TEST_KEY.thing2];
-            }
-        }
-        return number;
-    }
-
-    int TestDictionaryEnumInt()
-    {
-        int number = 0;
-
-        for (int iLoop = 0; iLoop < 1000; iLoop++)
-        {
-            if (dictEnumInt2Int.ContainsKey(TEST_KEY_INT.thing2))
-            {
-                number += dictEnumInt2Int[TEST_KEY_INT.thing2];
-            }
-        }
-        return number;
-    }
-
-    int TestDictionaryString()
-    {
-        int number = 0;
-
-        for (int iLoop = 0; iLoop < 1000; iLoop++)
-        {
-            if (dictStrInt.ContainsKey("12"))
-            {
-                number += dictStrInt["12"];
-            }
-        }
-        return number;
-    }
-
-    int TestDictionaryInt()
-    {
-        int number = 0;
-
-        for (int iLoop = 0; iLoop < 1000; iLoop++)
+        UnityEngine.Profiling.Profiler.BeginSample("Dictionary (iterate and add) : int");
+        for (int iLoop = 0; iLoop < numIterations; iLoop++)
         {
             if (dictIntInt.ContainsKey(12))
             {
                 number += dictIntInt[12];
             }
         }
-        return number;
+        UnityEngine.Profiling.Profiler.EndSample();
+
+        // Dictionary of strings
+        // No GC allocs! Wow! ~1.21ms
+        number = 0;
+        UnityEngine.Profiling.Profiler.BeginSample("Dictionary (iterate and add) : string");
+        for (int iLoop = 0; iLoop < numIterations; iLoop++)
+        {
+            if (dictStrInt.ContainsKey("12"))
+            {
+                number += dictStrInt["12"];
+            }
+        }
+        UnityEngine.Profiling.Profiler.EndSample();
+
+        // Allocs 117.2KB in ~2.03ms  
+        number = 0;
+        UnityEngine.Profiling.Profiler.BeginSample("Dictionary (iterate and add) : enum, boxing");
+        for (int iLoop = 0; iLoop < numIterations; iLoop++)
+        {
+            if (dictEnumInt.ContainsKey(TEST_KEY.thing2))
+            {
+                number += dictEnumInt[TEST_KEY.thing2];
+            }
+        }
+        UnityEngine.Profiling.Profiler.EndSample();
+
+        // No GC allocs in ~1.73ms
+        number = 0;
+        UnityEngine.Profiling.Profiler.BeginSample("Dictionary (iterate and add) : enum, no-boxing");
+        for (int iLoop = 0; iLoop < numIterations; iLoop++)
+        {
+            if (dictEnumIntNoBox.ContainsKey(TEST_KEY.thing2))
+            {
+                number += dictEnumIntNoBox[TEST_KEY.thing2];
+            }
+        }
+        UnityEngine.Profiling.Profiler.EndSample();
+
+        // Identical performance as EnumNoBoxing
+        // No GC allocs in ~1.73ms
+        number = 0;
+        UnityEngine.Profiling.Profiler.BeginSample("Dictionary (iterate and add) : enum of int");
+        for (int iLoop = 0; iLoop < numIterations; iLoop++)
+        {
+            if (dictEnumInt2Int.ContainsKey(TEST_KEY_INT.thing2))
+            {
+                number += dictEnumInt2Int[TEST_KEY_INT.thing2];
+            }
+        }
+        UnityEngine.Profiling.Profiler.EndSample();
     }
 }

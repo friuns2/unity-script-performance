@@ -15,143 +15,77 @@ using UnityEngine;
 ///
 /// Performance improvements using a GameObject transform
 /// </summary>
-public class Test_TransformController : MonoBehaviour
+public class Test_TransformController : MonoBehaviour, ITestController
 {
-    public Test_Transform scriptToUseForSetup;
-    List<Test_Transform> scriptList = new List<Test_Transform>();
+    public Test_Transform objTest;
+    private int numIterations = 1000;
 
-    // this array will be filled with 100 elements in “Start()”
-    Test_Transform[] scriptArray;
-
-    public bool testForEachList = true;
-    public bool testForList = true;
-    public bool testForArray = true;
-
-    void Start()
+    public void Init()
     {
-        // Build the test data
-        scriptArray = new Test_Transform[100];
-
-        for (int i = 0; i < 100; ++i)
-        {
-            scriptList.Add(scriptToUseForSetup);
-            scriptArray[i] = scriptToUseForSetup;
-        }
+        if (objTest == null)
+            Debug.LogError("No test object");
     }
 
-    void Update()
+    public void Test()
     {
         Test_Transform.globalDeltaTime = Time.deltaTime;
 
         // do a lot of iterations:
-        for (int a = 0; a < 100; ++a)
+        UnityEngine.Profiling.Profiler.BeginSample("Transform");
+        for (int a = 0; a < numIterations; a++)
         {
-            if (testForArray)
-            {
-                // for() version with array
-                Update_Array_Version();
-            }
-
-            if (testForList)
-            {
-                // for() version with List
-                //
-                Update_For_List_Version();
-            }
-
-            if (testForEachList)
-            {
-                // foreach() version with List
-                //
-                Update_ForEach_List_Version();
-            }
+            objTest.UpdateCharacter();
         }
-    }
+        UnityEngine.Profiling.Profiler.EndSample();
 
-    void Update_For_List_Version()
-    {
-        // cnt = scriptList.Count caches the length
-        // but we do it each time to be consistent.
+        UnityEngine.Profiling.Profiler.BeginSample("Transform : Reduce vector ops");
+        for (int a = 0; a < numIterations; a++)
+        {
+            objTest.UpdateCharacter_ReduceVectorOps();
+        }
+        UnityEngine.Profiling.Profiler.EndSample();
 
-        for (int i = 0, cnt = scriptList.Count; i < cnt; ++i)
-            scriptList[i].UpdateCharacter();
+        UnityEngine.Profiling.Profiler.BeginSample("Transform : Cached transforms");
+        for (int a = 0; a < numIterations; a++)
+        {
+            objTest.UpdateCharacter_CachedTransforms();
+        }
+        UnityEngine.Profiling.Profiler.EndSample();
 
-        for (int i = 0, cnt = scriptList.Count; i < cnt; ++i)
-            scriptList[i].UpdateCharacter_ReduceVectorOps();
+        UnityEngine.Profiling.Profiler.BeginSample("Transform : Local position");
+        for (int a = 0; a < numIterations; a++)
+        {
+            objTest.UpdateCharacter_LocalPosition();
+        }
+        UnityEngine.Profiling.Profiler.EndSample();
 
-        for (int i = 0, cnt = scriptList.Count; i < cnt; ++i)
-            scriptList[i].UpdateCharacter_CachedTransforms();
+        UnityEngine.Profiling.Profiler.BeginSample("Transform : Reduce engine calls");
+        for (int a = 0; a < numIterations; a++)
+        {
+            objTest.UpdateCharacter_ReduceEngineCalls();
+        }
+        UnityEngine.Profiling.Profiler.EndSample();
 
-        for (int i = 0, cnt = scriptList.Count; i < cnt; ++i)
-            scriptList[i].UpdateCharacter_LocalPosition();
+        UnityEngine.Profiling.Profiler.BeginSample("Transform : No vector math");
+        for (int a = 0; a < numIterations; a++)
+        {
+            objTest.UpdateCharacter_NoVectorMath();
+        }
+        UnityEngine.Profiling.Profiler.EndSample();
 
-        for (int i = 0, cnt = scriptList.Count; i < cnt; ++i)
-            scriptList[i].UpdateCharacter_ReduceEngineCalls();
+        UnityEngine.Profiling.Profiler.BeginSample("Transform : Cache delta time (get/set)");
+        for (int a = 0; a < numIterations; a++)
+        {
+            objTest.UpdateCharacter_CacheDeltaTimeGetSet();
+        }
+        UnityEngine.Profiling.Profiler.EndSample();
 
-        for (int i = 0, cnt = scriptList.Count; i < cnt; ++i)
-            scriptList[i].UpdateCharacter_NoVectorMath();
-
-        for (int i = 0, cnt = scriptList.Count; i < cnt; ++i)
-            scriptList[i].UpdateCharacter_CacheDeltaTimeGetSet();
-
-        for (int i = 0, cnt = scriptList.Count; i < cnt; ++i)
-            scriptList[i].UpdateCharacter_CacheDeltaTime();
-    }
-
-    void Update_ForEach_List_Version()
-    {
-        foreach (Test_Transform script in scriptList)
-            script.UpdateCharacter();
-
-        foreach (Test_Transform script in scriptList)
-            script.UpdateCharacter_ReduceVectorOps();
-
-        foreach (Test_Transform script in scriptList)
-            script.UpdateCharacter_CachedTransforms();
-
-        foreach (Test_Transform script in scriptList)
-            script.UpdateCharacter_LocalPosition();
-
-        foreach (Test_Transform script in scriptList)
-            script.UpdateCharacter_ReduceEngineCalls();
-
-        foreach (Test_Transform script in scriptList)
-            script.UpdateCharacter_NoVectorMath();
-
-        foreach (Test_Transform script in scriptList)
-            script.UpdateCharacter_CacheDeltaTimeGetSet();
-
-        foreach (Test_Transform script in scriptList)
-            script.UpdateCharacter_CacheDeltaTime();
-    }
-
-    void Update_Array_Version()
-    {
-        // cnt = scriptArray.Length caches the length
-        // but we do it each time to be consistent.
-        for (int i = 0, cnt = scriptArray.Length; i < cnt; ++i)
-            scriptArray[i].UpdateCharacter();
-
-        for (int i = 0, cnt = scriptArray.Length; i < cnt; ++i)
-            scriptArray[i].UpdateCharacter_ReduceVectorOps();
-
-        for (int i = 0, cnt = scriptArray.Length; i < cnt; ++i)
-            scriptArray[i].UpdateCharacter_CachedTransforms();
-
-        for (int i = 0, cnt = scriptArray.Length; i < cnt; ++i)
-            scriptArray[i].UpdateCharacter_LocalPosition();
-
-        for (int i = 0, cnt = scriptArray.Length; i < cnt; ++i)
-            scriptArray[i].UpdateCharacter_ReduceEngineCalls();
-
-        for (int i = 0, cnt = scriptArray.Length; i < cnt; ++i)
-            scriptArray[i].UpdateCharacter_NoVectorMath();
-
-        for (int i = 0, cnt = scriptArray.Length; i < cnt; ++i)
-            scriptArray[i].UpdateCharacter_CacheDeltaTimeGetSet();
-
-        for (int i = 0, cnt = scriptArray.Length; i < cnt; ++i)
-            scriptArray[i].UpdateCharacter_CacheDeltaTime();
+        UnityEngine.Profiling.Profiler.BeginSample("Transform : Cache delta time");
+        for (int a = 0; a < numIterations; a++)
+        {
+            objTest.UpdateCharacter_CacheDeltaTime();
+        }
+        UnityEngine.Profiling.Profiler.EndSample();
     }
 }
 

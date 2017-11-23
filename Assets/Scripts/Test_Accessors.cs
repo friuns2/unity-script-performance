@@ -6,33 +6,44 @@ using LongswordStudios;
 /// <summary>
 /// Harness for accessor (get/set) tests.
 /// </summary>
-public class Test_Accessors : MonoBehaviour
+public class Test_Accessors : MonoBehaviour, ITestController
 {
-    void Update()
+    int accessorIterations = 10000;
+    int vector3Iterations = 1000;
+
+    bool genericValueAccessors { get; set; }
+    bool genericValue;
+
+    public void Init()
     {
-        TestRemovingAccessors();
+        genericValue = true;
+        genericValueAccessors = true;
     }
 
-    void TestRemovingAccessors()
+    public void Test()
     {
-        for (int iTest = 0; iTest < 1000; iTest++)
+        UnityEngine.Profiling.Profiler.BeginSample("Accessors functions (yes)");
+        for (int iTest = 0; iTest < accessorIterations; iTest++)
+            genericValueAccessors = !genericValueAccessors;
+        UnityEngine.Profiling.Profiler.EndSample();
+
+        UnityEngine.Profiling.Profiler.BeginSample("Accessors functions (no)");
+        for (int iTest = 0; iTest < accessorIterations; iTest++)
+            genericValue = !genericValue;
+        UnityEngine.Profiling.Profiler.EndSample();
+
+        UnityEngine.Profiling.Profiler.BeginSample("Vector3 (Unity)");
+        for (int iTest = 0; iTest < vector3Iterations; iTest++)
         {
-            TestVector3Zero();
+            Vector3 newVec = Vector3.zero;
         }
+        UnityEngine.Profiling.Profiler.EndSample();
 
-        for (int iTest = 0; iTest < 1000; iTest++)
+        UnityEngine.Profiling.Profiler.BeginSample("Vector3 (static)");
+        for (int iTest = 0; iTest < vector3Iterations; iTest++)
         {
-            TestFastVector3Zero();
+            Vector3 newVec = Utils_Perf.vec3_zero;
         }
-    }
-
-    void TestVector3Zero()
-    {
-        Vector3 newVec = Vector3.zero;
-    }
-
-    void TestFastVector3Zero()
-    {
-        Vector3 newVec = Utils_Perf.vec3_zero;
+        UnityEngine.Profiling.Profiler.EndSample();
     }
 }

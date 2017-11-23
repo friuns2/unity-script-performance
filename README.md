@@ -1,6 +1,7 @@
 # Unity Script Performance Examples #
 
 This project is a set of examples and utilities to help you improve Unity's C# script performance.
+
 https://bitbucket.org/GarretPolk/unity-script-performance
 
 ## FEATURES ##
@@ -41,6 +42,9 @@ https://docs.unity3d.com/Manual/ProfilerCPU.html
 5. In the Overview area expand "BehaviourUpdate" then "TestController.Update()". There you can see the results of each test.
 
 ## Observations ##
+(Based on Unity 5.5.4 using standard .NET 3.5 and Unity 2017.2 using Experimental .NET 4.6)
+
+for() : Caching the length of the loop improves speed.
 
 Caching Transform and GameObject and using local versions is much faster than calling .transform or .gameobject. GameObject caching alone is x2 faster. 
 
@@ -50,21 +54,24 @@ Accessor functions (get{}/set{}) are x10 slower than using raw variables.
 
 ### Collections ###
 Arrays are MUCH faster than all other collections, except Contains() on large sets. Use arrays if possible.
+
 Calling Resize() before adding many items to a collection can make a significant improvement in speed and GC allocations.
+
 HashSet is slower than Dictionary. I'm not sure why since HashSet is really just the keys part of a Dictionary. Odd.
 
 Collection speed overview
+
 Fastest:
-Remove (values) : Array, Stack, Queue, Dictionary, HashSet
-Remove (keys) : Dictionary
-Contains : Dictionary, HashSet
-Add : Array, Stack, Queue, List
+*Remove (values) : Array, Stack, Queue, Dictionary, HashSet
+*Remove (keys) : Dictionary
+*Contains : Dictionary, HashSet, Array (for small sets < ~150)
+*Add : Array, Stack, Queue, List
 
 Slow:
-Remove (values) : List, Linked List (allocates!)
-Remove (keys) : HashSet (allocates!)
-Contains : Queue, Linked List, List (array is much faster), Stack
-Add : Dictionary, HashSet, ArrayList, Linked List
+*Remove (values) : List, Linked List (allocates in .NET 3.5!, not 4.6)
+*Remove (keys) : HashSet (allocates in .NET 3.5!, not 4.6)
+*Contains : Queue, Linked List, List (array is much faster), Stack
+*Add : Dictionary, HashSet, ArrayList, Linked List
 
 ## Contacts ##
 

@@ -44,34 +44,31 @@ https://docs.unity3d.com/Manual/ProfilerCPU.html
 ## Observations ##
 (Based on Unity 5.5.4 using standard .NET 3.5 and Unity 2017.2 using Experimental .NET 4.6)
 
-for() : Caching the length of the loop improves speed.
-
-Caching Transform and GameObject and using local versions is much faster than calling .transform or .gameobject. GameObject caching alone is x2 faster. 
-
-Using static versions of Vector3 and Vector2 are also significantly faster than Vector3.zero, etc.
-
-Accessor functions (get{}/set{}) are x10 slower than using raw variables.
+* for() : Caching the length of the loop improves speed.
+* Caching Transform and GameObject and using local versions is much faster than calling .transform or .gameobject. GameObject caching alone is x2 faster. 
+* Using static versions of Vector3 and Vector2 are also significantly faster than Vector3.zero, etc.
+* Accessor functions (get{}/set{}) are x10 slower than using raw variables.
 
 ### Collections ###
-Arrays are MUCH faster than all other collections, except Contains() on large sets. Use arrays if possible.
+* Arrays are MUCH faster than all other collections, except Contains() on large sets. Use arrays if possible.
+* Calling Resize() before adding many items to a collection can make a significant improvement in speed and GC allocations.
+* HashSet is slower than Dictionary. I'm not sure why since HashSet is really just the keys part of a Dictionary. Odd.
 
-Calling Resize() before adding many items to a collection can make a significant improvement in speed and GC allocations.
+#### Collection speed overview ####
 
-HashSet is slower than Dictionary. I'm not sure why since HashSet is really just the keys part of a Dictionary. Odd.
+##### Fastest #####
 
-Collection speed overview
+* Remove (values) : Array, Stack, Queue, Dictionary, HashSet
+* Remove (keys) : Dictionary
+* Contains : Dictionary, HashSet, Array (for small sets < ~150)
+* Add : Array, Stack, Queue, List
 
-Fastest:
-*Remove (values) : Array, Stack, Queue, Dictionary, HashSet
-*Remove (keys) : Dictionary
-*Contains : Dictionary, HashSet, Array (for small sets < ~150)
-*Add : Array, Stack, Queue, List
+##### Slowest #####
 
-Slow:
-*Remove (values) : List, Linked List (allocates in .NET 3.5!, not 4.6)
-*Remove (keys) : HashSet (allocates in .NET 3.5!, not 4.6)
-*Contains : Queue, Linked List, List (array is much faster), Stack
-*Add : Dictionary, HashSet, ArrayList, Linked List
+* Remove (values) : List, Linked List (allocates in .NET 3.5!, not 4.6)
+* Remove (keys) : HashSet (allocates in .NET 3.5!, not 4.6)
+* Contains : Queue, Linked List, List (array is much faster), Stack
+* Add : Dictionary, HashSet, ArrayList, Linked List
 
 ## Contacts ##
 

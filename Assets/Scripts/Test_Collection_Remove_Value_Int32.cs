@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using LongswordStudios;
+using GP.Utils;
 
 /// <summary>
 /// Test various C# collections for
@@ -18,12 +18,12 @@ public class Test_Collection_Remove_Value_Int32 : MonoBehaviour, ITestController
     LinkedList<int> linkedList = new LinkedList<int>();
     Stack<int> stack = new Stack<int>(numIterations);
     Queue<int> q = new Queue<int>(numIterations);
-    Utils_FastList<int> fastList;
+    GP.Utils.FastListInt fastList;
 
     public void Init()
     {
         if (fastList == null)
-            fastList = new Utils_FastList<int>(numIterations);
+            fastList = new GP.Utils.FastListInt(numIterations);
 
         fastList.Clear();
         listInt.Clear();
@@ -133,7 +133,7 @@ public class Test_Collection_Remove_Value_Int32 : MonoBehaviour, ITestController
             for (int i = 0; i < numIterations; i++)
             {
                 if (i % 2 == 0)
-                    Utils_Collections.Remove (fastList, i);
+                    fastList.Remove(i);
             }
         }
         UnityEngine.Profiling.Profiler.EndSample();

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using LongswordStudios;
+using GP.Utils;
 
 /// <summary>
 /// Test various C# collections for
@@ -20,7 +20,7 @@ public class Test_Collection_Contains_GameObject : MonoBehaviour, ITestControlle
     LinkedList<GameObject> linkedList = new LinkedList<GameObject>();
     Stack<GameObject> stack = new Stack<GameObject>(numIterations);
     Queue<GameObject> q = new Queue<GameObject>(numIterations);
-    Utils_FastList<GameObject> fastList = new Utils_FastList<GameObject>(numIterations);
+    FastListGO fastList = new FastListGO(numIterations);
 
     public void Init()
     {
@@ -43,7 +43,7 @@ public class Test_Collection_Contains_GameObject : MonoBehaviour, ITestControlle
 
     public void Test()
     {
-        UnityEngine.Profiling.Profiler.BeginSample("Collection (contains, GameObject) : Array");
+        UnityEngine.Profiling.Profiler.BeginSample("Collection (iterate, GameObject) : Array");
         {
             for (int cv = 0; cv < numIterations; cv++)
             {
@@ -64,6 +64,19 @@ public class Test_Collection_Contains_GameObject : MonoBehaviour, ITestControlle
                 {
                     Debug.LogError("Bug!");
                     return;
+                }
+            }
+        }
+        UnityEngine.Profiling.Profiler.EndSample();
+
+        UnityEngine.Profiling.Profiler.BeginSample("Collection (iterate, GameObject) : List");
+        {
+            for (int cv = 0; cv < numIterations; cv++)
+            {
+                for (int i = 0; i < numIterations; i++)
+                {
+                    if (list[i] == checkVals[cv])
+                        break;
                 }
             }
         }
@@ -135,7 +148,7 @@ public class Test_Collection_Contains_GameObject : MonoBehaviour, ITestControlle
         }
         UnityEngine.Profiling.Profiler.EndSample();
 
-        UnityEngine.Profiling.Profiler.BeginSample("Collection (contains, GameObject) : FastList<Int32> ");
+        UnityEngine.Profiling.Profiler.BeginSample("Collection (contains, GameObject) : FastListGO ");
         for (int cv = 0; cv < numIterations; cv++)
         {
             if (!fastList.Contains(checkVals[cv]))

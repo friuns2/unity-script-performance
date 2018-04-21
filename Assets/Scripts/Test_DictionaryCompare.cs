@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using LongswordStudios;
+using GP.Utils;
 
 /// <summary>
 /// Examples of performance improvements with containers.

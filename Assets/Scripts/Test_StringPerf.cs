@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using LongswordStudios;
+using GP.Utils;
 
 /// <summary>
 ///  Tests the speeds of various methods of String

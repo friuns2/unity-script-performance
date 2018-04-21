@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Project created by Garret Polk from Longsword Studios, Inc.
-/// http://www.longswordstudios.com
+/// Project created by Garret Polk
+/// http://www.garretpolk.com
 /// Code comments are mine.
 /// 
 /// Tests speed of caching the GameObject for a MonoBehaviour

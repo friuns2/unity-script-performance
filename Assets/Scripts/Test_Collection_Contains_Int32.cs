@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using LongswordStudios;
+using GP.Utils;
 
 /// <summary>
 /// Test various C# collections for
@@ -20,7 +20,8 @@ public class Test_Collection_Contains_Int32 : MonoBehaviour, ITestController
     LinkedList<int> linkedList = new LinkedList<int>();
     Stack<int> stack = new Stack<int>(numIterations);
     Queue<int> q = new Queue<int>(numIterations);
-    Utils_FastList<int> fastList = new Utils_FastList<int>(numIterations);
+    FastListInt fastList = new FastListInt(numIterations);
+    System.Array arrayClass = System.Array.CreateInstance(typeof(int), numIterations);
 
     public void Init()
     {
@@ -38,18 +39,33 @@ public class Test_Collection_Contains_Int32 : MonoBehaviour, ITestController
             stack.Push(i);
             q.Enqueue(i);
             fastList.Add(i);
+            arrayClass.SetValue(i, i);
         }
     }
 
     public void Test()
     {
-        UnityEngine.Profiling.Profiler.BeginSample("Collection (contains, Int32) : Array");
+        UnityEngine.Profiling.Profiler.BeginSample("Collection (iterate, Int32) : []");
         {
             for (int cv = 0; cv < numCheckVals; cv++)
             {
                 for (int i = 0; i < numIterations; i++)
                 {
                     if (arrayInt[i] == checkVals[cv])
+                        break;
+                }
+            }
+        }
+        UnityEngine.Profiling.Profiler.EndSample();
+
+        // GetValue() allocates memory!!??!
+        UnityEngine.Profiling.Profiler.BeginSample("Collection (iterate, Int32) : Array Class, resize");
+        {
+            for (int cv = 0; cv < numCheckVals; cv++)
+            {
+                for (int i = 0; i < numIterations; i++)
+                {
+                    if (arrayClass.GetValue(i).Equals (checkVals[cv]))
                         break;
                 }
             }
@@ -135,10 +151,10 @@ public class Test_Collection_Contains_Int32 : MonoBehaviour, ITestController
         }
         UnityEngine.Profiling.Profiler.EndSample();
 
-        UnityEngine.Profiling.Profiler.BeginSample("Collection (contains, Int32) : FastList<Int32> static");
+        UnityEngine.Profiling.Profiler.BeginSample("Collection (contains, Int32) : FastListInt");
         for (int cv = 0; cv < numCheckVals; cv++)
         {
-            if (!Utils_Collections.Contains(fastList, checkVals[cv]))
+            if (!fastList.Contains(checkVals[cv]))
             {
                 Debug.LogError("Bug!");
                 return;

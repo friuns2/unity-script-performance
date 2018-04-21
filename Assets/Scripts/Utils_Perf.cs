@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace LongswordStudios
+namespace GP.Utils
 {
     // Unite Europe 2016 - Optimizing Mobile Applications
     // https://www.youtube.com/watch?v=j4YAY36xjwE

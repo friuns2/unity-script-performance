@@ -11,11 +11,13 @@ https://bitbucket.org/GarretPolk/unity-script-performance
 * Faster access to common static data like Vector3.zero
 * Prevent garbage collection memory allocations using Enum as a key in containers
 * Speed tests for collection types (List, Dictionary, etc.) for Contains/Add/Remove().
+* FastList<T> collection : Trades memory for speed, faster than List<T> using an array to hold data.
+* Helper functions for non-allocating Physics 'cast' functions like RayCastNonAlloc() - See RaycastHelpers
 
 ### Details ###
 
-Project created by Garret Polk from Longsword Studios, Inc. 
-http://www.longswordstudios.com
+Project created by Garret Polk
+http://www.garretpolk.com
 
 ### Videos and slides ###
  
@@ -72,5 +74,5 @@ https://docs.unity3d.com/Manual/ProfilerCPU.html
 
 ## Contacts ##
 
-http://longswordstudios.com
+http://garretpolk.com
 Twitter : https://twitter.com/garretpolk  @garretpolk

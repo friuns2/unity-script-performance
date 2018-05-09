@@ -63,8 +63,8 @@ namespace GP.Utils
                 return false;
 
             // We need the index end
-            int s1Len = s1.Length - 1;
-            int s2Len = s2.Length - 1;
+            int s1Len = s1.Length;
+            int s2Len = s2.Length;
 
             // Too short?
             if (s1Len < s2Len)
@@ -99,7 +99,7 @@ namespace GP.Utils
             if (s1Len < s2Len)
                 return false;
 
-            for (int iChar = 0; iChar < s2Len; iChar++)
+            for (int iChar = 0; iChar <= s2Len; iChar++)
             {
                 if (s1[s1Len - iChar] != s2[s2Len - iChar])
                     return false;
@@ -132,8 +132,15 @@ namespace GP.Utils
             if (string.IsNullOrEmpty(s2))
                 return true;
 
-            int s1Len = s1.Length - 1;
-            int s2Len = s2.Length - 1;
+            // Example:
+            // 0123456789
+            // 789
+            // We only need to check the first string up to
+            // the last 3 characters.
+
+            // Length we need to check the first string
+            int s1Len = s1.Length - s2.Length + 1;
+            int s2Len = s2.Length;
             int iChar2 = 0;
             bool match = false;
 

@@ -12,6 +12,9 @@ public class Test_StringPerf : MonoBehaviour, ITestController
     string s1Test1 = "1Test1";
     string sTest = "Test";
     string sTest2Test = "Test2Test";
+    string sT = "T";
+    string st = "t";
+    string s2TestTest = "2TestTest";
     int numIterations = 1000;
 
     public void Init()
@@ -86,6 +89,12 @@ public class Test_StringPerf : MonoBehaviour, ITestController
             if (Utils_Perf.Contains(s1Test1, sTest))
                 matches++;
         }
+
+        //// For testing
+        //// false
+        //if (Utils_Perf.Contains(sTest2Test, s2TestTest))
+        //    matches++;
+
         UnityEngine.Profiling.Profiler.EndSample();
         if (matches != numIterations)
             Debug.LogError("Mismatch");
@@ -98,8 +107,21 @@ public class Test_StringPerf : MonoBehaviour, ITestController
             if (sTest2Test.EndsWith(sTest))
                 matches++;
         }
+
+        for (int iLoop = 0; iLoop < numIterations; iLoop++)
+        {
+            if (sTest2Test.EndsWith(st))
+                matches++;
+        }
+
+        // False
+        for (int iLoop = 0; iLoop < numIterations; iLoop++)
+        {
+            if (sTest2Test.EndsWith(sT))
+                matches++;
+        }
         UnityEngine.Profiling.Profiler.EndSample();
-        if (matches != numIterations)
+        if (matches != numIterations * 2)
             Debug.LogError("Mismatch");
 
         matches = 0;
@@ -109,8 +131,21 @@ public class Test_StringPerf : MonoBehaviour, ITestController
             if (Utils_Perf.EndsWith(sTest2Test, sTest))
                 matches++;
         }
+
+        for (int iLoop = 0; iLoop < numIterations; iLoop++)
+        {
+            if (Utils_Perf.EndsWith(sTest2Test, st))
+                matches++;
+        }
+
+        // False
+        for (int iLoop = 0; iLoop < numIterations; iLoop++)
+        {
+            if (Utils_Perf.EndsWith(sTest2Test, sT))
+                matches++;
+        }
         UnityEngine.Profiling.Profiler.EndSample();
-        if (matches != numIterations)
+        if (matches != numIterations * 2)
             Debug.LogError("Mismatch");
 
         // Starts with
@@ -121,8 +156,20 @@ public class Test_StringPerf : MonoBehaviour, ITestController
             if (sTest2Test.StartsWith(sTest))
                 matches++;
         }
+        for (int iLoop = 0; iLoop < numIterations; iLoop++)
+        {
+            if (sTest2Test.StartsWith(sT))
+                matches++;
+        }
+
+        // False
+        for (int iLoop = 0; iLoop < numIterations; iLoop++)
+        {
+            if (sTest2Test.StartsWith(st))
+                matches++;
+        }
         UnityEngine.Profiling.Profiler.EndSample();
-        if (matches != numIterations)
+        if (matches != numIterations * 2)
             Debug.LogError("Mismatch");
 
         matches = 0;
@@ -132,8 +179,20 @@ public class Test_StringPerf : MonoBehaviour, ITestController
             if (Utils_Perf.StartsWith(sTest2Test, sTest))
                 matches++;
         }
+        for (int iLoop = 0; iLoop < numIterations; iLoop++)
+        {
+            if (Utils_Perf.StartsWith(sTest2Test, sT))
+                matches++;
+        }
+
+        // False
+        for (int iLoop = 0; iLoop < numIterations; iLoop++)
+        {
+            if (Utils_Perf.StartsWith(sTest2Test, st))
+                matches++;
+        }
         UnityEngine.Profiling.Profiler.EndSample();
-        if (matches != numIterations)
+        if (matches != numIterations * 2)
             Debug.LogError("Mismatch");
     }
 }

@@ -52,18 +52,19 @@ https://docs.unity3d.com/Manual/ProfilerCPU.html
 * Accessor functions (get{}/set{}) are x10 slower than using raw variables.
 
 ### Collections ###
-* Arrays are MUCH faster than all other collections, except Contains() on large sets. Use arrays if possible.
+* Arrays ([] arrays, not System.Array) are MUCH faster than all other collections, except Contains() on large sets. Use arrays if possible.
 * Calling Resize() before adding many items to a collection can make a significant improvement in speed and GC allocations.
-* HashSet is slower than Dictionary. I'm not sure why since HashSet is really just the keys part of a Dictionary. Odd.
+* HashSet is slower than Dictionary for add/remove. I'm not sure why since HashSet is really just the keys part of a Dictionary. Odd.
 
 #### Collection speed overview ####
 
 ##### Fastest #####
 
-* Remove (values) : Array, Stack, Queue, Dictionary, HashSet
+* Remove (values) : array, Stack, Queue, Dictionary, HashSet
 * Remove (keys) : Dictionary
-* Contains : Dictionary, HashSet, Array (for small sets < ~150)
-* Add : Array, Stack, Queue, List
+* Contains : Dictionary, HashSet, array (for small sets < ~150)
+* Add : array, Stack, Queue, List
+* Iterate : array, FastList, List[] (List foreach is slower)
 
 ##### Slowest #####
 
@@ -71,6 +72,7 @@ https://docs.unity3d.com/Manual/ProfilerCPU.html
 * Remove (keys) : HashSet (allocates in .NET 3.5!, not 4.6)
 * Contains : Queue, Linked List, List (array is much faster), Stack
 * Add : Dictionary, HashSet, ArrayList, Linked List
+* Iterate : System.Array, Dictionary, HashSet (about x7-10 slower than array), any foreach() in general
 
 ## Contacts ##
 

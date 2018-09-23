@@ -82,7 +82,12 @@ namespace GP.Utils
         }
 
         /// <summary>
-        /// Returns the normally protected array
+        /// Returns the normally protected array. 
+        /// 
+        /// You can improve iteration performance if you use
+        /// this raw array when iterating 
+        /// (without adding/removing items).
+        /// 
         /// Warning : modifying it may invalidate the FastList
         /// </summary>
         /// <returns></returns>

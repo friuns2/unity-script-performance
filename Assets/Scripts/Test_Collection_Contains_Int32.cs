@@ -11,26 +11,41 @@ using GP.Utils;
 /// </summary>
 public class Test_Collection_Contains_Int32 : MonoBehaviour, ITestController
 {
-    public static int numIterations = 1000;
+    // Collection contains random values from 0 to numIteration
+    public int collectionSize = 1000;
+
+    // Check each collection for each numCheckVals
     public static int numCheckVals = 100;
-    int[] checkVals = new int[numIterations];
-    int[] arrayInt = new int[numIterations];
-    List<int> listInt = new List<int>(numIterations);
-    HashSet<int> hashset = new HashSet<int>();
-    Dictionary<int, int> dict = new Dictionary<int, int>(numIterations);
-    LinkedList<int> linkedList = new LinkedList<int>();
-    Stack<int> stack = new Stack<int>(numIterations);
-    Queue<int> q = new Queue<int>(numIterations);
-    FastListInt fastList = new FastListInt(numIterations);
-    System.Array arrayClass = System.Array.CreateInstance(typeof(int), numIterations);
+
+    int[] checkVals;
+    int[] arrayInt;
+    List<int> listInt;
+    HashSet<int> hashset;
+    Dictionary<int, int> dict;
+    LinkedList<int> linkedList;
+    Stack<int> stack;
+    Queue<int> q;
+    FastListInt fastList;
+    System.Array arrayClass;
 
     public void Init()
     {
+        checkVals = new int[collectionSize];
+        arrayInt = new int[collectionSize];
+        listInt = new List<int>(collectionSize);
+        hashset = new HashSet<int>();
+        dict = new Dictionary<int, int>(collectionSize);
+        linkedList = new LinkedList<int>();
+        stack = new Stack<int>(collectionSize);
+        q = new Queue<int>(collectionSize);
+        fastList = new FastListInt(collectionSize);
+        arrayClass = System.Array.CreateInstance(typeof(int), collectionSize);
+
         for (int i = 0; i < numCheckVals; i++)
         {
-            checkVals[i] = UnityEngine.Random.Range(0, numIterations);
+            checkVals[i] = UnityEngine.Random.Range(0, collectionSize);
         }
-        for (int i = 0; i < numIterations; i++)
+        for (int i = 0; i < collectionSize; i++)
         {
             arrayInt[i] = i;
             listInt.Add(i);
@@ -46,11 +61,11 @@ public class Test_Collection_Contains_Int32 : MonoBehaviour, ITestController
 
     public void Test()
     {
-        UnityEngine.Profiling.Profiler.BeginSample("Collection (iterate, Int32) : []");
+        UnityEngine.Profiling.Profiler.BeginSample("Collection (contains, Int32) : iterate [] : " + collectionSize);
         {
             for (int cv = 0; cv < numCheckVals; cv++)
             {
-                for (int i = 0; i < numIterations; i++)
+                for (int i = 0; i < collectionSize; i++)
                 {
                     if (arrayInt[i] == checkVals[cv])
                         break;
@@ -60,11 +75,11 @@ public class Test_Collection_Contains_Int32 : MonoBehaviour, ITestController
         UnityEngine.Profiling.Profiler.EndSample();
 
         // GetValue() allocates memory!!??!
-        UnityEngine.Profiling.Profiler.BeginSample("Collection (iterate, Int32) : Array Class, resize");
+        UnityEngine.Profiling.Profiler.BeginSample("Collection (contains, Int32) : iterate Array Class : " + collectionSize);
         {
             for (int cv = 0; cv < numCheckVals; cv++)
             {
-                for (int i = 0; i < numIterations; i++)
+                for (int i = 0; i < collectionSize; i++)
                 {
                     if (arrayClass.GetValue(i).Equals (checkVals[cv]))
                         break;
@@ -73,7 +88,7 @@ public class Test_Collection_Contains_Int32 : MonoBehaviour, ITestController
         }
         UnityEngine.Profiling.Profiler.EndSample();
 
-        UnityEngine.Profiling.Profiler.BeginSample("Collection (contains, Int32) : List");
+        UnityEngine.Profiling.Profiler.BeginSample("Collection (contains, Int32) : List : " + collectionSize);
         {
             for (int cv = 0; cv < numCheckVals; cv++)
             {
@@ -86,7 +101,7 @@ public class Test_Collection_Contains_Int32 : MonoBehaviour, ITestController
         }
         UnityEngine.Profiling.Profiler.EndSample();
 
-        UnityEngine.Profiling.Profiler.BeginSample("Collection (contains, Int32) : HashSet");
+        UnityEngine.Profiling.Profiler.BeginSample("Collection (contains, Int32) : HashSet : " + collectionSize);
         {
             for (int cv = 0; cv < numCheckVals; cv++)
             {
@@ -99,7 +114,7 @@ public class Test_Collection_Contains_Int32 : MonoBehaviour, ITestController
         }
         UnityEngine.Profiling.Profiler.EndSample();
 
-        UnityEngine.Profiling.Profiler.BeginSample("Collection (contains, Int32) : Dictionary");
+        UnityEngine.Profiling.Profiler.BeginSample("Collection (contains, Int32) : Dictionary : " + collectionSize);
         {
             for (int cv = 0; cv < numCheckVals; cv++)
             {
@@ -112,7 +127,7 @@ public class Test_Collection_Contains_Int32 : MonoBehaviour, ITestController
         }
         UnityEngine.Profiling.Profiler.EndSample();
 
-        UnityEngine.Profiling.Profiler.BeginSample("Collection (contains, Int32) : Linked List");
+        UnityEngine.Profiling.Profiler.BeginSample("Collection (contains, Int32) : Linked List : " + collectionSize);
         {
             for (int cv = 0; cv < numCheckVals; cv++)
             {
@@ -126,7 +141,7 @@ public class Test_Collection_Contains_Int32 : MonoBehaviour, ITestController
         UnityEngine.Profiling.Profiler.EndSample();
 
 
-        UnityEngine.Profiling.Profiler.BeginSample("Collection (contains, Int32) : Stack");
+        UnityEngine.Profiling.Profiler.BeginSample("Collection (contains, Int32) : Stack : " + collectionSize);
         {
             for (int cv = 0; cv < numCheckVals; cv++)
             {
@@ -139,7 +154,7 @@ public class Test_Collection_Contains_Int32 : MonoBehaviour, ITestController
         }
         UnityEngine.Profiling.Profiler.EndSample();
 
-        UnityEngine.Profiling.Profiler.BeginSample("Collection (contains, Int32) : Queue");
+        UnityEngine.Profiling.Profiler.BeginSample("Collection (contains, Int32) : Queue : " + collectionSize);
         {
             for (int cv = 0; cv < numCheckVals; cv++)
             {
@@ -152,7 +167,7 @@ public class Test_Collection_Contains_Int32 : MonoBehaviour, ITestController
         }
         UnityEngine.Profiling.Profiler.EndSample();
 
-        UnityEngine.Profiling.Profiler.BeginSample("Collection (contains, Int32) : FastListInt");
+        UnityEngine.Profiling.Profiler.BeginSample("Collection (contains, Int32) : FastListInt : " + collectionSize);
         for (int cv = 0; cv < numCheckVals; cv++)
         {
             if (!fastList.Contains(checkVals[cv]))

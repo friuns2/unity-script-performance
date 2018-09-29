@@ -43,9 +43,33 @@ public class Test_RayCast : MonoBehaviour, ITestController
         //    RaycastHelper.SortByDistance(rhd);
         //    Debug.Log("Closest hit = " + rhd.hitResults[0].collider.gameObject.name);
         //}
+        float distance = 0;
 
+        // BACKWARDS
+        UnityEngine.Profiling.Profiler.BeginSample("Raycast (Helper) backwards");
+        for (int i = 0; i < numIterations; i++)
+        {
+            if (!RaycastHelper.Raycast
+                (rhd, Utils_Perf.vec3_forward * range, Utils_Perf.vec3_back, range))
+                Debug.LogError("Bug!");
+        }
+        UnityEngine.Profiling.Profiler.EndSample();
 
-        UnityEngine.Profiling.Profiler.BeginSample("Raycast (Helper)");
+        UnityEngine.Profiling.Profiler.BeginSample("Raycast (SortResults backwards)");
+        RaycastHelper.SortByDistanceRev(rhd);
+        UnityEngine.Profiling.Profiler.EndSample();
+
+        distance = rhd.hitResults[0].distance;
+        for (int i = 0, iLen = rhd.numHits; i < iLen; ++i)
+        {
+            if (distance < rhd.hitResults[i].distance)
+                Debug.LogError("Bad sort");
+
+            distance = rhd.hitResults[i].distance;
+        }
+
+        // FORWARDS
+        UnityEngine.Profiling.Profiler.BeginSample("Raycast (Helper) forward");
         for (int i = 0; i < numIterations; i++)
         {
             if (!RaycastHelper.Raycast
@@ -54,11 +78,24 @@ public class Test_RayCast : MonoBehaviour, ITestController
         }
         UnityEngine.Profiling.Profiler.EndSample();
 
-        UnityEngine.Profiling.Profiler.BeginSample("Raycast (SortResults)");
-        RaycastHelper.SortByDistanceRev(rhd);
+        UnityEngine.Profiling.Profiler.BeginSample("Raycast (SortResults forward)");
         RaycastHelper.SortByDistance(rhd);
         UnityEngine.Profiling.Profiler.EndSample();
 
+        // Test sort
+        distance = rhd.hitResults[0].distance;
+        for ( int i = 0, iLen = rhd.numHits; i < iLen; ++i)
+        {
+            if (distance > rhd.hitResults[i].distance)
+                Debug.LogError("Bad sort");
+
+            distance = rhd.hitResults[i].distance;
+        }
+
+
+
+
+        // REGULAR
         UnityEngine.Profiling.Profiler.BeginSample("Raycast (Regular)");
         for (int i = 0; i < numIterations; i++)
         {

@@ -1,8 +1,5 @@
 ﻿// Revised BSD License text at bottom
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using System;
 
 namespace GP.Utils
 {
@@ -27,59 +24,134 @@ namespace GP.Utils
     public class RaycastHelper
     {
         /// <summary>
-        /// Used to sort RaycastHit by distance
-        /// </summary>
-        public class RHDistanceComparer : IComparer<RaycastHit>
-        {
-            public int Compare(RaycastHit x, RaycastHit y)
-            {
-                return x.distance.CompareTo(y.distance);
-            }
-        }
-
-        /// <summary>
-        /// Used to sort RaycastHit by distance (reversed)
-        /// </summary>
-        public class RHDistanceRevComparer : IComparer<RaycastHit>
-        {
-            public int Compare(RaycastHit x, RaycastHit y)
-            {
-                return y.distance.CompareTo(x.distance);
-            }
-        }
-
-        static IComparer<RaycastHit> _distComparer = new RHDistanceComparer();
-        static IComparer<RaycastHit> _distRevComparer = new RHDistanceRevComparer();
-
-        /// <summary>
         /// Sorts RaycastHitData by RaycastHit distance
         /// Closest is index 0, furthest is rhd.numHits
         /// 
-        /// Does not allocate memory (or at least it shouldn't...)
+        /// No memory allocations! Yay!
         /// </summary>
         /// <param name="rhd"></param>
         public static void SortByDistance(RaycastHitData rhd)
         {
-            Array.Sort(rhd.hitResults,
-                0,
-                rhd.numHits,
-                _distComparer);
+            // Array.Sort() can allocate memory! GC.Alloc will appear in the Profiler
+            //
+            //Array.Sort(rhd.hitResults,
+            //    0,
+            //    rhd.numHits,
+            //    _distComparer);
+            if (rhd.numHits == 0)
+                return;
+
+            CombSort(ref rhd);
         }
 
         /// <summary>
         /// Sorts RaycastHitData by RaycastHit distance, in reverse
         /// Furthest is index 0, closest is rhd.numHits
         /// 
-        /// Does not allocate memory (or at least it shouldn't...)
+        /// No memory allocations! Yay!
         /// </summary>
         /// <param name="rhd"></param>
         public static void SortByDistanceRev(RaycastHitData rhd)
         {
-            Array.Sort(rhd.hitResults,
-                0,
-                rhd.numHits,
-                _distRevComparer);
+            // Array.Sort() can allocate memory! GC.Alloc will appear in the Profiler
+            //
+            //Array.Sort(rhd.hitResults,
+            //    0,
+            //    rhd.numHits,
+            //    _distRevComparer);
+            if (rhd.numHits == 0)
+                return;
+            CombSortRev(ref rhd);
         }
+
+        /// <summary>
+        /// For sorting only
+        /// </summary>
+        static RaycastHit tempRaycastHit = new RaycastHit();
+        static double gap = 0;
+        static bool swaps = false;
+        static int i = 0;
+
+        /// <summary>
+        /// Sort using static temporary variables to avoid memory allocations
+        /// at runtime. NOT THREAD SAFE! USE ONLY ON MAIN THREAD!
+        /// </summary>
+        /// <param name="rhd"></param>
+        public static void CombSort(ref RaycastHitData rhd)
+        {
+            gap = rhd.numHits;
+            swaps = false;
+            i = 0;
+
+            while (gap > 1 || swaps)
+            {
+                gap /= 1.247330950103979f;
+
+                if (gap < 1)
+                    gap = 1;
+
+                i = 0;
+                swaps = false;
+
+                while (i + gap < rhd.numHits)
+                {
+                    int igap = i + (int)gap;
+
+                    if (rhd.hitResults[i].distance > rhd.hitResults[igap].distance)
+                    {
+                        // Swap
+                        tempRaycastHit = rhd.hitResults[i];
+                        rhd.hitResults[i] = rhd.hitResults[igap];
+                        rhd.hitResults[igap] = tempRaycastHit;
+                        swaps = true;
+                    }
+
+                    ++i;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Sort using static temporary variables to avoid memory allocations
+        /// at runtime. NOT THREAD SAFE! USE ONLY ON MAIN THREAD!
+        /// 
+        /// 50% slower than CombSort() but I'm too tired to figure out why
+        /// </summary>
+        /// <param name="rhd"></param>
+        public static void CombSortRev(ref RaycastHitData rhd)
+        {
+            gap = rhd.numHits;
+            swaps = false;
+            i = 0;
+
+            while (gap > 1 || swaps)
+            {
+                gap /= 1.247330950103979f;
+
+                if (gap < 1)
+                    gap = 1;
+
+                i = 0;
+                swaps = false;
+
+                while (i + gap < rhd.numHits)
+                {
+                    int igap = i + (int)gap;
+
+                    if (rhd.hitResults[i].distance < rhd.hitResults[igap].distance)
+                    {
+                        // Swap
+                        tempRaycastHit = rhd.hitResults[i];
+                        rhd.hitResults[i] = rhd.hitResults[igap];
+                        rhd.hitResults[igap] = tempRaycastHit;
+                        swaps = true;
+                    }
+
+                    ++i;
+                }
+            }
+        }
+
 
         /// <summary>
         /// Check data for basic initialization
